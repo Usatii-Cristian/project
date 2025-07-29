@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FunCasino - Toate jocurile</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #111;
@@ -23,21 +19,33 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      position: relative; /* Pentru poziționarea absolută a meniului */
+      position: relative;
     }
     header {
       text-align: center;
       margin-bottom: 20px;
+      display: flex; /* Adăugat pentru aliniere */
+      justify-content: space-between; /* Spațiere între titlu și buton */
+      align-items: center; /* Aliniere verticală */
     }
     header h1 {
       color: #ffcc00;
       font-size: 2.5em;
-      text-shadow: 0 0 10px #ff4444;
+      margin: 0; /* Elimină marginile implicite */
     }
-    .balance {
-      font-size: 1.4em;
-      color: #0f0;
-      margin: 10px 0;
+    /* Stil pentru butonul Home */
+    #home-btn {
+      background: #444;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #home-btn:hover {
+      background: #666;
     }
     /* Meniu de jocuri pe dreapta */
     .game-menu-container {
@@ -46,471 +54,638 @@
         right: 20px;
         z-index: 100;
     }
+
     .menu-toggle-btn {
-      background: #ff4444;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
+        background: #ff4444;
+        color: white;
+        border: none;
+        padding: 15px 25px; /* Mărit padding-ul */
+        font-size: 18px; /* Mărit fontul */
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        width: 100%; /* Butonul toggle ocupă întreaga lățime a containerului */
     }
+
     .menu-toggle-btn:hover {
-      background: #ff6666;
+        background: #ff6666;
     }
+
     .game-selector-sidebar {
-      display: none; /* Ascuns implicit */
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 10px;
-      background: rgba(34, 34, 34, 0.95);
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(255, 100, 100, 0.3);
+        display: none; /* Ascuns implicit */
+        flex-direction: column;
+        gap: 15px; /* Spatiu mai mare între butoane */
+        margin-top: 10px;
+        background: rgba(34, 34, 34, 0.95);
+        padding: 20px; /* Padding mai mare */
+        border-radius: 10px;
+        min-width: 200px; /* Lățime minimă pentru meniu */
     }
+
     .game-selector-sidebar button {
-      background: #333;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-      width: 100%;
-      text-align: left;
+        background: #444;
+        color: white;
+        border: none;
+        padding: 12px 20px; /* Padding mai mare */
+        font-size: 16px; /* Font mai mare */
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-align: left; /* Aliniere text la stânga */
+        width: 100%; /* Butoanele ocupă întreaga lățime */
     }
+
     .game-selector-sidebar button:hover {
-      background: #555;
+        background: #666;
     }
     .game-selector-sidebar button.active {
-      background: #ff4444;
-      color: white;
+        background: #ff4444;
     }
-    /* Restul stilurilor rămân aproape la fel */
-    .bet-area {
+    .game { display: none; }
+    .active-game { display: block !important; }
+    .game h2 { color: #ffcc00; margin-bottom: 15px; text-align: center; }
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 20px 0;
+      color: #888;
+      font-size: 0.9em;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-between;
       background: #222;
       padding: 15px;
       border-radius: 10px;
       margin-bottom: 20px;
-      text-align: center;
+      flex-wrap: wrap;
     }
-    .bet-options {
+    .stat-item {
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+      margin: 5px;
+    }
+    .stat-value {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #ffcc00;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      color: #aaa;
+    }
+    .message {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: center;
+      min-height: 20px;
+    }
+    .bet-controls {
       display: flex;
       justify-content: center;
       gap: 10px;
+      margin: 15px 0;
       flex-wrap: wrap;
-      margin: 10px 0;
     }
-    .bet-btn {
+    .bet-controls button {
       background: #444;
       color: white;
       border: none;
       padding: 10px 15px;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
+      transition: 0.3s;
     }
-    .bet-btn:hover {
+    .bet-controls button:hover {
       background: #666;
     }
-    .bet-input {
-      width: 100px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      text-align: center;
-      font-size: 16px;
+    .bet-controls button.active {
+      background: #ff4444;
     }
-    .games {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .game {
-      display: none;
-      background: #222;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(255, 100, 100, 0.2);
-    }
-    .game.active {
-      display: block;
-    }
-    .game h2 {
-      color: #ffcc00;
-      margin-bottom: 15px;
-    }
-    /* Istoric Crush */
-    .history {
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin: 15px 0;
-    }
-    .history-item {
-      width: 40px;
-      height: 40px;
-      background: #333;
-      border-radius: 8px;
+    .custom-bet {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 14px;
+      gap: 5px;
     }
-    .history-item.crash {
-      background: #ff4444;
+    .custom-bet input {
+      width: 80px;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background: #222;
       color: white;
     }
-    .history-item.small {
-      background: #444;
-      color: #aaa;
+    .custom-bet button {
+      background: #ff4444;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    /* Sloturi */
-    .reels {
+    /* - Sloturi - */
+    .slots-machine {
       display: flex;
       justify-content: center;
       gap: 10px;
-      font-size: 60px;
       margin: 20px 0;
-      height: 80px;
     }
-    .reel {
+    .slot {
       width: 80px;
       height: 80px;
-      background: #fff;
+      background: #222;
       border-radius: 10px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      color: #000;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      align-items: center;
+      font-size: 2.5em;
+      border: 2px solid #444;
     }
-    /* Plinko */
+    #spin {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 30px;
+      font-size: 1.2em;
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #spin:hover {
+      background: #ff6666;
+    }
+    #spin:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    /* - Plinko - */
     .plinko-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 0 auto;
+      margin: 20px 0;
     }
-    .plinko-board {
-      width: 300px;
-      height: 400px;
-      margin: 20px auto;
-      background: #333;
-      border-radius: 15px;
+    #plinko-board {
       position: relative;
+      width: 300px;
+      height: 500px;
+      background: #222;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      margin-bottom: 10px;
     }
     .peg {
       position: absolute;
-      width: 12px;
-      height: 12px;
-      background: #ccc;
+      width: 10px;
+      height: 10px;
+      background: #555;
       border-radius: 50%;
     }
     .ball {
       position: absolute;
-      width: 16px;
-      height: 16px;
-      background: #ff4444;
+      width: 15px;
+      height: 15px;
+      background: #ffcc00;
       border-radius: 50%;
-      transition: top 0.1s linear, left 0.1s linear;
-      z-index: 2;
     }
-    .plinko-slots {
+    #plinko-slots {
       display: flex;
-      margin-top: 10px;
-      font-size: 14px;
+      width: 100%;
+      justify-content: space-around;
+      gap: 2px; /* Redus gap pentru cifre mai strânse */
+    }
+    #plinko-slots div {
+      width: 30px; /* Redus lățime */
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.9em; /* Redus font-size */
+    }
+    .plinko-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin: 15px 0;
+      align-items: center;
+    }
+    .plinko-controls input {
+      width: 60px;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background: #222;
+      color: white;
+    }
+    #drop {
+      padding: 12px 25px;
+      font-size: 1.1em;
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #drop:hover {
+      background: #ff6666;
+    }
+    #drop:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    /* - Crush - */
+    .crush-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    #multiplier-display {
+      font-size: 3em;
+      font-weight: bold;
+      color: #ffcc00;
+      margin: 20px 0;
+    }
+    #plane {
+      font-size: 4em;
+      transition: transform 0.1s linear;
+      margin: 20px 0;
+    }
+    #explosion {
+      font-size: 4em;
+      color: #ff4444;
+      display: none;
+      margin: 20px 0;
+    }
+    .crush-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .crush-buttons button {
+      padding: 12px 25px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #start-crush {
+      background: #44ff44;
+      color: #000;
+    }
+    #start-crush:hover {
+      background: #66ff66;
+    }
+    #start-crush:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    #cash-out {
+      background: #ffcc00;
+      color: #000;
+    }
+    #cash-out:hover {
+      background: #ffdd33;
+    }
+    #cash-out:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    /* - Tower - */
+    .difficulty {
+      display: flex;
       justify-content: center;
       gap: 10px;
-      width: 300px;
-    }
-    /* Crush */
-    .crush-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .crush-area {
-      width: 300px;
-      height: 300px;
-      margin: 20px auto;
-      background: #111;
-      border-radius: 50%;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 30px rgba(255, 50, 50, 0.4);
-    }
-    .crush-plane {
-      width: 60px;
-      height: 60px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300bfff"><path d="M2 12l10-7v4h4v6h-4v4z"/></svg>') no-repeat center;
-      background-size: contain;
-      position: absolute;
-      top: 220px;
-      left: 120px;
-      transition: transform 0.3s;
-    }
-    .crush-multiplier {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 40px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 10px black;
-    }
-    .explosion {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(circle, #ff5500, #ff0000);
-      border-radius: 50%;
-      display: none;
-      z-index: 10;
-    }
-    /* Tower */
-    .tower-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .difficulty {
-      margin-bottom: 15px;
+      margin: 15px 0;
     }
     .difficulty button {
+      padding: 8px 15px;
       background: #444;
       color: white;
       border: none;
-      padding: 8px 12px;
-      margin: 0 5px;
-      border-radius: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .difficulty button:hover {
+      background: #666;
     }
     .difficulty button.active {
       background: #ff4444;
     }
-    .tower-grid {
+    #tower-grid {
       display: grid;
-      /* grid-template-columns: repeat(5, 1fr); */ /* Se setează din JS */
-      gap: 10px;
-      margin: 20px 0;
-      width: 300px;
+      gap: 3px; /* Redus gap */
+      margin: 15px auto; /* Redus margin */
+      max-width: 250px; /* Redus max-width */
     }
     .tower-cell {
       aspect-ratio: 1;
-      background: #333;
-      border-radius: 10px;
+      background: #222;
+      border-radius: 3px; /* Redus border-radius */
       display: flex;
-      align-items: center;
       justify-content: center;
-      font-size: 24px;
+      align-items: center;
+      font-size: 1.2em; /* Redus font-size */
       cursor: pointer;
       transition: 0.3s;
+      width: 30px; /* Fixat lățime */
+      height: 30px; /* Fixat înălțime */
     }
     .tower-cell:hover {
-      background: #555;
+      background: #333;
+    }
+    .tower-cell.bomb {
+      background: #ff4444;
     }
     .tower-cell.safe {
-      background: #0f0;
+      background: #44ff44;
     }
     .tower-cell.bonus {
       background: #ffcc00;
-      color: #000;
     }
-    .tower-cell.bomb {
-      background: #f00;
+    #start-tower {
+      display: block;
+      margin: 15px auto; /* Redus margin */
+      padding: 10px 25px; /* Redus padding */
+      font-size: 1em; /* Redus font-size */
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
     }
-    /* Miner */
-    .miner-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    #start-tower:hover {
+      background: #ff6666;
     }
+    /* - Miner - */
     .bombs-select {
-      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
     }
     .bombs-select button {
+      padding: 8px 15px;
       background: #444;
       color: white;
       border: none;
-      padding: 8px 12px;
-      margin: 0 5px;
-      border-radius: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .bombs-select button:hover {
+      background: #666;
     }
     .bombs-select button.active {
       background: #ff4444;
     }
-    .miner-grid {
+    #miner-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      margin: 20px 0;
-      width: 360px;
+      gap: 5px;
+      margin: 20px auto;
+      max-width: 300px;
     }
     .miner-cell {
       aspect-ratio: 1;
-      background: #333;
-      border-radius: 10px;
+      background: #222;
+      border-radius: 5px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      font-size: 24px;
+      align-items: center;
+      font-size: 1.5em;
       cursor: pointer;
       transition: 0.3s;
     }
     .miner-cell:hover {
-      background: #555;
+      background: #333;
     }
     .miner-cell.bomb {
-      background: #f00;
+      background: #ff4444;
     }
     .miner-cell.safe {
-      background: #0f0;
+      background: #44ff44;
     }
-    .miner-cell.crystal {
-      background: #00bfff;
+    .miner-cell.disabled {
+        pointer-events: none;
+        opacity: 0.5;
     }
-    /* Crossy */
-    .crossy-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .crossy-path {
-      width: 300px;
-      height: 40px;
-      background: #444;
-      border-radius: 10px;
-      margin: 5px 0;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .crossy-car {
-      position: absolute;
-      width: 40px;
-      height: 30px;
-      background: #ff5555;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      animation: carMove 3s linear infinite;
-    }
-    @keyframes carMove {
-      from { left: -50px; }
-      to { left: 350px; }
-    }
-    .crossy-player {
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      background: #00bfff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      transition: left 0.3s ease;
-    }
-    .crossy-choice-btns {
-      margin: 15px 0;
-      display: flex;
-      gap: 10px;
-    }
-    .crossy-choice-btns button {
-      padding: 10px 15px;
-      font-size: 16px;
-    }
-    .crossy-message {
-      margin: 10px 0;
-      min-height: 24px;
-      color: #ffcc00;
-    }
-    .crossy-win-display {
-      font-size: 1.2em;
-      color: #0f0;
-      margin: 10px 0;
-    }
-    /* Butoane generale */
-    .btn-primary {
+    #start-miner, #cash-out-miner {
+      padding: 10px 20px;
+      margin: 10px;
       background: #ff4444;
       color: white;
       border: none;
-      padding: 14px 24px;
-      font-size: 18px;
-      border-radius: 10px;
+      border-radius: 5px;
       cursor: pointer;
-      margin: 10px;
+    }
+    #start-miner:hover, #cash-out-miner:hover {
+      background: #ff6666;
+    }
+    #cash-out-miner:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    .miner-controls {
+      display: flex;
+      justify-content: center;
+    }
+    /* - Crossy - */
+    #crossy-path {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+      min-height: 50px; /* Asigură un spațiu minim */
+    }
+    #crossy-path div {
+      font-size: 2em;
+    }
+    .crossy-controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .crossy-controls button {
+      padding: 12px 25px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
       transition: 0.3s;
     }
-    .btn-primary:hover {
-      background: #ff6666;
-      transform: scale(1.05);
-    }
-    .btn-primary:disabled {
+    #left-btn, #right-btn {
       background: #444;
-      cursor: not-allowed;
-      transform: scale(1);
-    }
-    .btn-secondary {
-      background: #555;
       color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      margin: 10px;
     }
-    .btn-secondary:hover {
-      background: #777;
+    #left-btn:hover, #right-btn:hover {
+      background: #666;
     }
-    .message {
-      margin: 15px 0;
-      font-size: 18px;
-      min-height: 28px;
-      color: #ffcc00;
-      text-align: center;
+    #left-btn:disabled, #right-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
     }
-    footer {
-      text-align: center;
-      margin-top: 30px;
-      color: #777;
-      font-size: 0.9em;
-    }
-    footer button {
+    #start-crossy {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 30px;
+      font-size: 1.1em;
       background: #ff4444;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
+      border-radius: 30px;
       cursor: pointer;
-      margin: 5px;
     }
-    footer button:hover {
+    #start-crossy:hover {
       background: #ff6666;
     }
+    #start-crossy:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    /* - BlackJack - */
+    #blackjack {
+      text-align: center;
+    }
+    #blackjack h2 {
+       margin-top: 0; /* Elimină marginea de sus pentru titlul jocului */
+    }
+    #dealer-cards, #player-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+      min-height: 100px; /* Asigură spațiu pentru cărți */
+    }
+    .card {
+      width: 60px;
+      height: 90px;
+      border: 1px solid #333;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: #fff;
+      color: #000;
+    }
+    .hidden-card {
+      background-color: #555;
+      color: #555;
+    }
+    #bj-controls {
+      margin: 20px 0;
+    }
+    #bj-controls button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #bj-hit { background: #444; color: white; }
+    #bj-stand { background: #666; color: white; }
+    #bj-deal { background: #ff4444; color: white; }
+    #bj-hit:hover, #bj-stand:hover { background: #888; }
+    #bj-deal:hover { background: #ff6666; }
+    #bj-hit:disabled, #bj-stand:disabled, #bj-deal:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    /* - Poker - */
+    #poker {
+      text-align: center;
+    }
+    #poker h2 {
+       margin-top: 0;
+    }
+    #poker-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      min-height: 100px;
+    }
+    #poker-message {
+      margin: 10px 0;
+      min-height: 20px;
+      color: #ffcc00;
+    }
+    #poker-controls {
+      margin: 20px 0;
+    }
+    #poker-controls button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #deal-poker { background: #ff4444; color: white; }
+    #deal-poker:hover { background: #ff6666; }
+    #deal-poker:disabled { background: #555; cursor: not-allowed; }
+    #draw-poker { background: #444; color: white; }
+    #draw-poker:hover { background: #666; }
+    #draw-poker:disabled { background: #555; cursor: not-allowed; }
+    /* Istoric Crush */
+    #crush-history {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .history-item {
+      padding: 5px 10px;
+      background: #333;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+    .history-item.crash {
+      background: #ff4444;
+    }
+    /* Responsiv */
     @media (max-width: 600px) {
-      .container { padding: 10px; }
-      header h1 { font-size: 2em; }
-      .reels { font-size: 50px; }
-      .reel { width: 60px; height: 60px; }
-      .plinko-board, .crush-area, .tower-grid, .miner-grid, .crossy-path { width: 280px; }
-      .miner-grid { grid-template-columns: repeat(5, 1fr); width: 250px; }
-      .bet-options { gap: 5px; }
-      .bet-btn { padding: 8px 12px; font-size: 14px; }
-      .game-menu-container {
-          top: 10px;
-          right: 10px;
+      .container {
+        padding: 10px;
+      }
+      header h1 {
+        font-size: 1.8em;
+      }
+      .stats {
+        flex-direction: column;
+      }
+      .stat-item {
+        margin: 10px 0;
+      }
+      .slots-machine {
+        gap: 5px;
+      }
+      .slot {
+        width: 60px;
+        height: 60px;
+        font-size: 2em;
+      }
+      #plinko-board {
+        width: 250px;
+        height: 400px;
+      }
+      .crossy-controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      .crossy-controls button {
+        width: 80%;
       }
     }
   </style>
@@ -518,229 +693,297 @@
 <body>
   <div class="container">
     <header>
-      <h1>🎰 FunCasino</h1>
-      <div class="balance">Monede: <span id="coins">1000</span></div>
+      <h1>🎲 FunCasino</h1>
+      <button id="home-btn">🏠 Home</button>
     </header>
 
-    <!-- Meniu de jocuri pe dreapta -->
-    <div class="game-menu-container">
-      <button class="menu-toggle-btn" id="menu-toggle">☰ Meniu Jocuri</button>
-      <div class="game-selector-sidebar" id="game-sidebar">
-        <button onclick="switchGame('slots')">🎰 Sloturi</button>
-        <button onclick="switchGame('plinko')">🎯 Plinko</button>
-        <button onclick="switchGame('crush')">🚀 Crush</button>
-        <button onclick="switchGame('tower')">🧱 Tower</button>
-        <button onclick="switchGame('miner')">💎 Miner</button>
-        <button onclick="switchGame('crossy')">🚶 Crossy</button>
-        <button onclick="switchGame('blackjack')">🃏 BlackJack</button>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="coins">1000</div>
+        <div class="stat-label">Monede</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="bet">10</div>
+        <div class="stat-label">Pariu Curent</div>
       </div>
     </div>
 
-    <!-- Zonă pariuri -->
-    <div class="bet-area">
-      <strong>Alege suma pariata:</strong>
-      <div class="bet-options">
-        <button class="bet-btn" onclick="setBet(5)">5</button>
-        <button class="bet-btn" onclick="setBet(10)">10</button>
-        <button class="bet-btn" onclick="setBet(25)">25</button>
-        <button class="bet-btn" onclick="setBet(50)">50</button>
-        <button class="bet_btn" onclick="setBet(100)">100</button>
-        <input type="number" id="custom-bet" class="bet-input" placeholder="Altele" min="1" />
-        <button class="bet-btn" onclick="applyCustomBet()">OK</button>
+    <div class="message" id="message">Bun venit la FunCasino! Alege un joc.</div>
+
+    <div class="bet-controls">
+      <button onclick="setBet(10)">10</button>
+      <button onclick="setBet(50)">50</button>
+      <button onclick="setBet(100)">100</button>
+      <button onclick="setBet(500)">500</button>
+      <div class="custom-bet">
+        <input type="number" id="custom-bet" placeholder="Alt pariU" min="1" max="10000">
+        <button onclick="applyCustomBet()">Aplică</button>
       </div>
     </div>
-    <!-- Mesaj -->
-    <div class="message" id="message"></div>
-    <!-- Jocuri -->
-    <div class="games">
-      <!-- SLOTURI -->
-      <div id="slots" class="game active">
-        <h2>🎰 Sloturi</h2>
-        <div class="reels">
-          <div class="reel" id="r1">🍒</div>
-          <div class="reel" id="r2">🍋</div>
-          <div class="reel" id="r3">🍉</div>
-        </div>
-        <button class="btn-primary" id="spin">Spin</button>
-      </div>
-      <!-- PLINKO -->
-      <div id="plinko" class="game">
-        <h2>🎯 Plinko</h2>
-        <p>Alege câte bile vrei să arunci (cost: 5 monede/bilă)</p>
-        <div class="bet-options">
-          <button class="bet-btn" onclick="setPlinkoBalls(1)">1 bilă</button>
-          <button class="bet-btn" onclick="setPlinkoBalls(5)">5 bile</button>
-          <button class="bet-btn" onclick="setPlinkoBalls(10)">10 bile</button>
-          <input type="number" id="plinko-balls" class="bet-input" placeholder="Altele" min="1" />
-          <button class="bet-btn" onclick="applyPlinkoBalls()">OK</button>
-        </div>
-        <div class="plinko-container">
-          <div class="plinko-board" id="plinko-board"></div>
-          <div class="plinko-slots" id="plinko-slots"></div>
-          <button class="btn-primary" id="drop-ball">Aruncă bilele</button>
-        </div>
-      </div>
-      <!-- CRUSH -->
-      <div id="crush" class="game">
-        <h2>🚀 Crush</h2>
-        <p>Retrage-te înainte ca avionul să explodeze!</p>
-        <div class="history" id="crush-history"></div>
-        <div class="crush-container">
-          <div class="crush-area">
-            <div class="explosion" id="explosion"></div>
-            <div class="crush-plane" id="plane"></div>
-            <div class="crush-multiplier" id="multiplier">1.00x</div>
-          </div>
-          <button class="btn-primary" id="start-crush">Start</button>
-          <button class="btn-primary" id="cash-out" disabled>Cash Out</button>
-        </div>
-      </div>
-      <!-- TOWER -->
-      <div id="tower" class="game">
-        <h2>🧱 Tower</h2>
-        <p>Alege nivelul și urcă cât mai sus!</p>
-        <div class="difficulty">
-          <button onclick="setTowerDiff('easy')" class="active">Ușor</button>
-          <button onclick="setTowerDiff('medium')">Mediu</button>
-          <button onclick="setTowerDiff('hard')">Dificil</button>
-        </div>
-        <div class="tower-container">
-          <div class="tower-grid" id="tower-grid"></div>
-          <button class="btn-primary" id="start-tower">Start Joc</button>
-        </div>
-      </div>
-      <!-- MINER -->
-      <div id="miner" class="game">
-        <h2>💎 Miner</h2>
-        <p>Deschide blocuri sigure și extrage banii oricând!</p>
-        <div class="bombs-select">
-          <button onclick="setBombs(1)" class="active">1 💣</button>
-          <button onclick="setBombs(3)">3 💣</button>
-          <button onclick="setBombs(5)">5 💣</button>
-          <button onclick="setBombs(10)">10 💣</button>
-          <button onclick="setBombs(15)">15 💣</button>
-          <button onclick="setBombs(20)">20 💣</button>
-          <button onclick="setBombs(24)">24 💣</button>
-        </div>
-        <div class="miner-container">
-          <div class="miner-grid" id="miner-grid"></div>
-          <button class="btn-primary" id="start-miner">Start Joc</button>
-          <button class="btn-secondary" id="cash-out-miner" disabled>💰 Extrage banii acum</button>
-        </div>
-      </div>
-       <!-- CROSSY -->
-      <div id="crossy" class="game">
-        <h2>🚶 Crossy Road</h2>
-        <p>Traversează străzile fără să te loveshti de mașini!</p>
-        <div class="crossy-container">
-          <div id="crossy-game-area"></div>
-          <div class="crossy-choice-btns">
-            <button class="btn-primary" onclick="crossyChoose('left')" id="crossy-left-btn" disabled>⬅️ Stânga</button>
-            <button class="btn-primary" onclick="crossyChoose('center')" id="crossy-center-btn" disabled>⏺️ Mijloc</button>
-            <button class="btn-primary" onclick="crossyChoose('right')" id="crossy-right-btn" disabled>➡️ Dreapta</button>
-          </div>
-          <div class="crossy-message" id="crossy-message">Apasă 'Start Joc' pentru a începe.</div>
-          <div class="crossy-win-display" id="crossy-win-display"></div>
-          <button class="btn-primary" id="start-crossy">Start Joc</button>
-          <button class="btn-secondary" id="cash-out-crossy" disabled>💰 Cash Out</button>
-        </div>
+
+    <!-- Meniu de Selectare Jocuri -->
+    <div class="game-menu-container">
+      <button class="menu-toggle-btn" onclick="toggleGameMenu()">☰ Jocuri</button>
+      <div class="game-selector-sidebar" id="game-sidebar">
+        <button onclick="switchGame('slots')">🎰 Sloturi</button>
+        <button onclick="switchGame('plinko')">🔴 Plinko</button>
+        <button onclick="switchGame('crush')">🚀 Crush</button>
+        <button onclick="switchGame('tower')">🗼 Tower</button>
+        <button onclick="switchGame('miner')">⛏️ Miner</button>
+        <button onclick="switchGame('crossy')">🐸 Crossy</button>
+        <button onclick="switchGame('blackjack')">🃏 BlackJack</button>
+        <button onclick="switchGame('poker')">🃟 Poker</button> <!-- Adăugat -->
       </div>
     </div>
+
+    <!-- JOC SLOTURI -->
+    <div id="slots" class="game active-game">
+      <h2>🎰 Sloturi Norocoase</h2>
+      <div class="slots-machine">
+        <div class="slot" id="r1">🍒</div>
+        <div class="slot" id="r2">🍋</div>
+        <div class="slot" id="r3">🍉</div>
+      </div>
+      <button id="spin">Învârte! (Cost: <span id="spin-cost">10</span>)</button>
+    </div>
+
+    <!-- JOC PLINKO -->
+    <div id="plinko" class="game">
+      <h2>🔴 Plinko</h2>
+      <div class="plinko-container">
+        <div id="plinko-board"></div>
+        <div id="plinko-slots"></div>
+      </div>
+      <div class="plinko-controls">
+        <label>Bile: <input type="number" id="plinko-balls" value="1" min="1" max="10"></label>
+        <button onclick="applyPlinkoBalls()">Aplică</button>
+        <button id="drop">Drop (Cost: <span id="drop-cost">5</span>/bila)</button>
+      </div>
+    </div>
+
+    <!-- JOC CRUSH -->
+    <div id="crush" class="game">
+      <h2>🚀 Crush</h2>
+      <div class="crush-container">
+        <div id="multiplier-display">1.000x</div>
+        <div id="plane">✈️</div>
+        <div id="explosion">💥</div>
+        <div class="crush-buttons">
+          <button id="start-crush">Start Crush (Cost: <span id="crush-cost">10</span>)</button>
+          <button id="cash-out" disabled>Cash Out</button>
+        </div>
+        <div>Istoric explozii:</div>
+        <div id="crush-history"></div>
+      </div>
+    </div>
+
+    <!-- JOC TOWER -->
+    <div id="tower" class="game">
+      <h2>🗼 Tower</h2>
+      <div class="difficulty">
+        <button onclick="setTowerDiff('easy')" class="active">Ușor (3 coloane)</button>
+        <button onclick="setTowerDiff('medium')">Mediu (4 coloane)</button>
+        <button onclick="setTowerDiff('hard')">Greu (5 coloane)</button>
+      </div>
+      <div id="tower-grid"></div>
+      <button id="start-tower">Start Tower (Cost: <span id="tower-cost">10</span>)</button>
+    </div>
+
+    <!-- JOC MINER -->
+    <div id="miner" class="game">
+      <h2>⛏️ Miner</h2>
+      <div class="bombs-select">
+        <button onclick="setBombs(1)" class="active">1 Bombă</button>
+        <button onclick="setBombs(3)">3 Bombe</button>
+        <button onclick="setBombs(5)">5 Bombe</button>
+        <button onclick="setBombs(10)">10 Bombe</button>
+      </div>
+      <div id="miner-grid"></div>
+      <div class="miner-controls">
+        <button id="start-miner">Start Miner (Cost: <span id="miner-cost">10</span>)</button>
+        <button id="cash-out-miner" disabled>Cash Out</button>
+      </div>
+    </div>
+
+    <!-- JOC CROSSY -->
+    <div id="crossy" class="game">
+      <h2>🐸 Crossy Road</h2>
+      <div class="message" id="crossy-message">Apasă Start pentru a juca!</div>
+      <div id="crossy-path"></div>
+      <div class="crossy-controls">
+        <button id="left-btn" disabled>⬅️ Stânga</button>
+        <button id="right-btn" disabled>Dreapta ➡️</button>
+      </div>
+      <div>Potential Câștig: <span id="crossy-win">0</span> monede</div>
+      <button id="start-crossy">Start Crossy (Cost: <span id="crossy-cost">10</span>)</button>
+      <button id="cash-out-crossy" disabled>Cash Out</button>
+    </div>
+
+    <!-- JOC BLACKJACK -->
+    <div id="blackjack" class="game">
+      <h2>🃏 BlackJack</h2>
+      <div id="bj-message" style="margin: 10px 0; min-height: 20px; color: #ffcc00;"></div>
+      
+      <div style="margin: 15px 0;">
+        <strong>Dealer:</strong>
+        <div id="dealer-cards" style="display: flex; flex-wrap: wrap; gap: 5px; margin: 5px 0;"></div>
+        <div>Total Dealer: <span id="dealer-total">?</span></div>
+      </div>
+
+      <div style="margin: 15px 0;">
+        <strong>Jucător:</strong>
+        <div id="player-cards" style="display: flex; flex-wrap: wrap; gap: 5px; margin: 5px 0;"></div>
+        <div>Total Jucător: <span id="player-total">0</span></div>
+      </div>
+
+      <div id="bj-controls">
+        <button id="bj-hit" disabled>Hit</button>
+        <button id="bj-stand" disabled>Stand</button>
+        <button id="bj-deal">Deal (Pariu: <span id="bj-bet-display">10</span>)</button>
+      </div>
+    </div>
+
+    <!-- JOC POKER -->
+    <div id="poker" class="game">
+      <h2>🃟 Video Poker</h2>
+      <div id="poker-message">Apasă Deal pentru a începe!</div>
+      
+      <div id="poker-cards" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin: 15px 0;"></div>
+      
+      <div id="poker-controls">
+        <button id="deal-poker">Deal (Cost: <span id="poker-bet-display">10</span>)</button>
+        <button id="draw-poker" disabled>Draw</button>
+      </div>
+    </div>
+
     <!-- Resetare + Susținere -->
     <div style="text-align:center; margin:20px 0;">
       <button id="reset" style="background:#555;">🔄 Resetare progres</button>
-      <button id="support" style="background:#ff4444;">❤️ Susține autorul</button>
+      <button id="support" style="background:#ff4444;">❤️ Support Author</button>
+      <button id="support2" style="background:#4444ff;">❤️ Support the author's wife</button>
     </div>
+
     <footer>
-      FunCasino © 2025 | Doar pentru divertisment – fără bani reali.Doar bosii adevarati joaca acest joc, un multumesc special catre Davidan din Soroca IPLT "Ion Creanga" clasa 9B 2025
+      <div>✨ Toate jocurile rulează local în browser!</div>
+      <div>📅 2025 FunCasino - Jocuri gratuite</div>
     </footer>
   </div>
+
   <script>
-    // 🔗 Înlocuiește cu Instagram-ul tău!
-    const instagramLink = "https://www.instagram.com/cri.sti__"; // ← AICI pune numele tău!
-    // Stare jucător
+    // 🔧 Stocare Locală & Inițializare
     let coins = parseInt(localStorage.getItem('funCasinoCoins')) || 1000;
     let currentBet = 10;
-    let isSpinning = false;
-    let isDropping = false;
-    let isCrushing = false;
-    let crushInterval;
     let historyCrush = JSON.parse(localStorage.getItem('crushHistory')) || [];
-    // Elemente
+    
+    // 🔗 Înlocuiește cu link-ul tău!
+    const instagramLink = "https://www.instagram.com/cri.sti__";
+    // 🔗 Înlocuiește cu link-ul celei de-al doilea persoane!
+    const instagramLink2 = "https://www.instagram.com/__danny.ella";
+
+    // --- ELEMENTE ---
     const coinDisplay = document.getElementById('coins');
+    const betDisplay = document.getElementById('bet');
     const messageBox = document.getElementById('message');
     const customBetInput = document.getElementById('custom-bet');
+    
+    // --- FUNCȚII GENERALE ---
     function updateCoins() {
       coinDisplay.textContent = coins;
       localStorage.setItem('funCasinoCoins', coins);
     }
-    // --- Pariu ---
+    
+    function updateBetDisplay() {
+      betDisplay.textContent = currentBet;
+      document.querySelectorAll('#spin-cost, #crush-cost, #tower-cost, #miner-cost, #crossy-cost, #drop-cost, #bj-bet-display, #poker-bet-display').forEach(el => {
+          if (el.id === 'drop-cost') {
+              el.textContent = currentBet;
+          } else if (el.id === 'bj-bet-display' || el.id === 'poker-bet-display') {
+              el.textContent = currentBet;
+          } else {
+              el.textContent = currentBet;
+          }
+      });
+    }
+
     function setBet(amount) {
       if (amount > 0) currentBet = amount;
+      updateBetDisplay();
+      messageBox.textContent = `Pariu setat: ${currentBet} monede`;
+      setTimeout(() => {
+        if (messageBox.textContent === `Pariu setat: ${currentBet} monede`) {
+          messageBox.textContent = "";
+        }
+      }, 2000);
     }
+
     function applyCustomBet() {
       const val = parseInt(customBetInput.value);
       if (val && val > 0 && val <= 10000) {
-        currentBet = val;
-        messageBox.textContent = `Pariu: ${val} monede`;
-        setTimeout(() => messageBox.textContent = "", 2000);
+        setBet(val);
       } else {
-        messageBox.textContent = "Sumă invalidă!";
-        setTimeout(() => messageBox.textContent = "", 2000);
+        messageBox.innerHTML = `<span style="color:#f55">Pariu invalid!</span>`;
+        setTimeout(() => { messageBox.textContent = ""; }, 2000);
       }
     }
-    // --- Meniu Jocuri pe Dreapta ---
-    const menuToggle = document.getElementById('menu-toggle');
-    const gameSidebar = document.getElementById('game-sidebar');
-    menuToggle.addEventListener('click', () => {
-        if (gameSidebar.style.display === 'flex') {
-            gameSidebar.style.display = 'none';
-        } else {
-            gameSidebar.style.display = 'flex';
-        }
-    });
-    // --- Schimbare joc ---
+
+    // --- FUNCȚII JOCURI ---
+    // - Comutare Jocuri -
     function switchGame(gameId) {
-      document.querySelectorAll('.game').forEach(g => g.classList.remove('active'));
-      document.getElementById(gameId).classList.add('active');
-      // Actualizăm butonul activ din sidebar
+      document.querySelectorAll('.game').forEach(game => game.classList.remove('active-game'));
+      document.getElementById(gameId).classList.add('active-game');
+      
       document.querySelectorAll('.game-selector-sidebar button').forEach(b => b.classList.remove('active'));
       const sidebarButtons = document.querySelectorAll('.game-selector-sidebar button');
       for (let button of sidebarButtons) {
-        // Verificăm dacă textul butonului conține numele jocului
         if (button.textContent.includes(
           gameId === 'slots' ? 'Sloturi' :
           gameId === 'plinko' ? 'Plinko' :
           gameId === 'crush' ? 'Crush' :
           gameId === 'tower' ? 'Tower' :
           gameId === 'miner' ? 'Miner' :
-          'Crossy' // Adăugat pentru Crossy
+          gameId === 'crossy' ? 'Crossy' :
+          gameId === 'blackjack' ? 'BlackJack' :
+          'Poker' 
         )) {
           button.classList.add('active');
           break;
         }
       }
-      // Ascundem meniul după ce a fost selectat un joc (pe mobil e util)
+      
       if (window.innerWidth <= 600) {
-          gameSidebar.style.display = 'none';
+        document.getElementById('game-sidebar').style.display = 'none';
       }
     }
-    // --- ISTORIC CRUSH ---
+    
+    // - Meniu Toggle -
+    function toggleGameMenu() {
+      const sidebar = document.getElementById('game-sidebar');
+      sidebar.style.display = sidebar.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // - ISTORIC CRUSH -
     function updateCrushHistory() {
       const hist = document.getElementById('crush-history');
       hist.innerHTML = '';
       [...historyCrush.slice(-10)].reverse().forEach(x => {
         const item = document.createElement('div');
         item.className = x <= 1.0 ? 'history-item crash' : 'history-item';
-        item.textContent = `${x.toFixed(2)}x`;
+        item.textContent = `${x.toFixed(3)}x`;
         hist.appendChild(item);
       });
     }
     updateCrushHistory();
-    // --- SLOTURI ---
+
+    // - SLOTURI -
     const symbols = ['🍒', '🍋', '🍉', '🍇', '🍊', '🔔', '💎', '7️⃣'];
-    const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
+    const reels = [
+      document.getElementById('r1'),
+      document.getElementById('r2'),
+      document.getElementById('r3')
+    ];
     const spinButton = document.getElementById('spin');
+    let isSpinning = false;
+
     spinButton.addEventListener('click', () => {
       if (isSpinning || coins < currentBet) {
         messageBox.innerHTML = `<span style="color:#f55">Fonduri insuficiente!</span>`;
@@ -750,200 +993,183 @@
       coins -= currentBet;
       updateCoins();
       messageBox.textContent = "Rotire...";
+      
       let spins = 0;
       const maxSpins = 20;
       const spinInterval = setInterval(() => {
-        reels[0].textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        reels[1].textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        reels[2].textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        reels.forEach(reel => {
+          reel.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        });
         spins++;
-        if (spins >= maxSpins) {
+        if (spins > maxSpins) {
           clearInterval(spinInterval);
-          checkWin();
           isSpinning = false;
+          
+          const r1 = reels[0].textContent;
+          const r2 = reels[1].textContent;
+          const r3 = reels[2].textContent;
+          let win = 0;
+          
+          if (r1 === r2 && r2 === r3) {
+            win = r1 === '7️⃣' ? 50 : r1 === '💎' ? 30 : 10;
+          } else if (r1 === r2 || r1 === r3 || r2 === r3) {
+            win = 2;
+          }
+          
+          win = Math.floor(win * currentBet);
+          if (win > 0) {
+            coins += win;
+            messageBox.innerHTML = `<span style="color:#0f0">🎉 Câștig: +${win} monede!</span>`;
+          } else {
+            messageBox.innerHTML = `<span style="color:#f55">Ai pierdut ${currentBet} monede.</span>`;
+          }
+          updateCoins();
         }
       }, 100);
     });
-    function checkWin() {
-      const r1 = reels[0].textContent;
-      const r2 = reels[1].textContent;
-      const r3 = reels[2].textContent;
-      let win = 0;
-      if (r1 === r2 && r2 === r3) {
-        win = r1 === '7️⃣' ? 50 : r1 === '💎' ? 30 : 10;
-      } else if (r1 === r2 || r1 === r3 || r2 === r3) {
-        win = 2;
-      }
-      win = Math.floor(win * currentBet);
-      if (win > 0) {
-        coins += win;
-        messageBox.innerHTML = `<span style="color:#0f0">🎉 Câștig: +${win} monede!</span>`;
-      } else {
-        messageBox.innerHTML = `<span style="color:#f55">Ai pierdut ${currentBet} monede.</span>`;
-      }
-      updateCoins();
-    }
 
-    // --- PLINKO - Versiune Actualizată ---
+    // - PLINKO - Versiune Actualizată -
     const board = document.getElementById('plinko-board');
     const slotsContainer = document.getElementById('plinko-slots');
-    const dropButton = document.getElementById('drop-ball');
+    const dropButton = document.getElementById('drop');
+    const BALL_RADIUS = 7;
+    const PEG_RADIUS = 5;
+    const ROWS = 12;
+    const COLS = 9;
+    const ROW_SPACING = 35;
+    const COL_SPACING = 35;
     let plinkoBallCount = 1;
-    const plinkoValues = [10, 5, 20, 2, 50, 2, 20, 5, 10]; // 9 sloturi
-
-    // Dimensiuni constante
-    const PEG_RADIUS = 6; // Raza bolțului (jumătate din 12px)
-    const BALL_RADIUS = 8; // Raza bilei (jumătate din 16px)
-    const ROW_SPACING = 40; // Spațiere verticală între rânduri
-    const COL_SPACING = 30; // Spațiere orizontală între bolțuri (ajustabil)
-    const START_Y = 30; // Poziția Y de start a bilei
-    const SLOT_WIDTH = 30; // Lățimea fiecărui slot
-
-    // Stocăm pozițiile bolților pentru referință
-    let pegPositions = [];
+    let isDropping = false;
 
     function createPegs() {
       board.innerHTML = '';
-      pegPositions = []; // Resetăm pozițiile
-      const boardWidth = board.clientWidth || 300; // Fallback
-      const boardHeight = board.clientHeight || 400; // Fallback
-
-      const rows = 8; // Număr de rânduri de bolțuri
-
-      for (let row = 0; row < rows; row++) {
-        const pegsInThisRow = row + 1; // Primul rând are 1 bolț, al doilea 2 etc.
-        // Calculăm offset-ul pentru a centra rândul curent
-        const rowWidth = (pegsInThisRow - 1) * COL_SPACING;
+      const boardWidth = board.clientWidth || 300;
+      const boardHeight = board.clientHeight || 500;
+      
+      for (let row = 0; row < ROWS; row++) {
+        const pegsInRow = row % 2 === 0 ? COLS : COLS - 1;
+        const rowWidth = (pegsInRow - 1) * COL_SPACING;
         const rowStartX = (boardWidth - rowWidth) / 2;
-
-        for (let col = 0; col < pegsInThisRow; col++) {
+        const y = 50 + row * ROW_SPACING;
+        
+        for (let col = 0; col < pegsInRow; col++) {
+          const x = rowStartX + col * COL_SPACING;
           const peg = document.createElement('div');
           peg.className = 'peg';
-
-          const x = rowStartX + col * COL_SPACING;
-          const y = START_Y + row * ROW_SPACING;
-
-          peg.style.left = `${x - PEG_RADIUS}px`; // Ajustăm pentru centrare
-          peg.style.top = `${y - PEG_RADIUS}px`;  // Ajustăm pentru centrare
-
+          peg.style.left = `${x - PEG_RADIUS}px`;
+          peg.style.top = `${y - PEG_RADIUS}px`;
           board.appendChild(peg);
-          // Stocăm poziția centrală a bolțului
-          pegPositions.push({ x: x, y: y, row: row, col: col });
         }
       }
-
-      // Actualizăm sloturile
+      
       slotsContainer.innerHTML = '';
-      const slotContainerWidth = slotsContainer.clientWidth || boardWidth;
-      const slotStartX = (slotContainerWidth - (plinkoValues.length * SLOT_WIDTH)) / 2;
-
+      const plinkoValues = [0.2, 0.5, 1, 2, 5, 2, 1, 0.5, 0.2];
+      const slotStartX = (boardWidth - (plinkoValues.length - 1) * COL_SPACING) / 2;
+      
       plinkoValues.forEach((val, index) => {
         const slot = document.createElement('div');
-        slot.style.width = `${SLOT_WIDTH}px`;
+        slot.style.width = `${COL_SPACING}px`;
         slot.style.marginLeft = index === 0 ? `${slotStartX}px` : '0';
         slot.style.marginRight = index === plinkoValues.length - 1 ? `${slotStartX}px` : '0';
         slot.textContent = val;
-        slot.style.color = val > 20 ? '#0f0' : val < 10 ? '#aaa' : '#ffcc00';
+        slot.style.color = val > 2 ? '#0f0' : val < 1 ? '#aaa' : '#ffcc00';
         slotsContainer.appendChild(slot);
       });
     }
 
-    // Inițializăm o dată la încărcare
-    window.addEventListener('load', createPegs);
-    // Re-creăm bolțurile dacă fereastra se redimensionează
-    window.addEventListener('resize', createPegs);
-
-    function setPlinkoBalls(count) {
-      plinkoBallCount = count;
-    }
     function applyPlinkoBalls() {
       const val = parseInt(document.getElementById('plinko-balls').value);
       if (val && val > 0) plinkoBallCount = val;
     }
+
     dropButton.addEventListener('click', () => {
-      const totalCost = plinkoBallCount * 5;
-      if (coins < totalCost) {
-        messageBox.innerHTML = `<span style="color:#f55">Nu ai suficiente monede pentru ${plinkoBallCount} bile!</span>`;
+      if (isDropping || coins < currentBet * plinkoBallCount) {
+        messageBox.innerHTML = `<span style="color:#f55">Fonduri insuficiente pentru ${plinkoBallCount} bile!</span>`;
         return;
       }
-      coins -= totalCost;
+      isDropping = true;
+      coins -= currentBet * plinkoBallCount;
       updateCoins();
       messageBox.textContent = `Arunc ${plinkoBallCount} bile...`;
+      
       let ballsDone = 0;
       for (let b = 0; b < plinkoBallCount; b++) {
         setTimeout(() => {
           const ball = document.createElement('div');
           ball.className = 'ball';
-          // Pornim bila din centrul tablei
-          const startX = (board.clientWidth || 300) / 2 - BALL_RADIUS;
-          const startY = START_Y - BALL_RADIUS * 2;
+          const boardWidth = board.clientWidth || 300;
+          const startX = boardWidth / 2 - BALL_RADIUS;
           ball.style.left = `${startX}px`;
-          ball.style.top = `${startY}px`;
+          ball.style.top = `${-BALL_RADIUS * 2}px`;
           board.appendChild(ball);
-
-          let ballX = (board.clientWidth || 300) / 2; // Poziția X centrală logică
-          let ballY = START_Y;               // Poziția Y logică
-          let currentRow = -1; // Bila începe deasupra primului rând
-
-          const fallInterval = setInterval(() => {
-            ballY += ROW_SPACING; // Coborâm bila logic cu o linie
-            currentRow++;
-
-            if (currentRow >= 8) { // Dacă a trecut de ultimul rând
-              clearInterval(fallInterval);
-              // Determinăm slotul în funcție de poziția finală X
-              const slotContainerWidth = slotsContainer.clientWidth || (board.clientWidth || 300);
-              const slotsStartX = ((board.clientWidth || 300) - slotContainerWidth) / 2 + (slotContainerWidth - (plinkoValues.length * SLOT_WIDTH)) / 2;
-              let slotIndex = Math.floor((ballX - slotsStartX) / SLOT_WIDTH);
-              // Asigurăm-ne că indexul este în limite
-              slotIndex = Math.max(0, Math.min(slotIndex, plinkoValues.length - 1));
-
-              const winValue = plinkoValues[slotIndex];
-              const win = Math.floor(winValue * currentBet / 10); // Calcul câștig
+          
+          let ballX = startX + BALL_RADIUS;
+          let ballY = -BALL_RADIUS;
+          let velX = (Math.random() - 0.5) * 4;
+          let velY = 0;
+          
+          const ballInterval = setInterval(() => {
+            ballY += velY;
+            ballX += velX;
+            velY += 0.2;
+            
+            if (ballY > (board.clientHeight || 500)) {
+              clearInterval(ballInterval);
+              
+              const slotIndex = Math.min(Math.max(Math.floor((ballX - (boardWidth - (9-1)*COL_SPACING)/2) / COL_SPACING), 0), 8);
+              const plinkoValues = [0.2, 0.5, 1, 2, 5, 2, 1, 0.5, 0.2];
+              const win = Math.floor(plinkoValues[slotIndex] * currentBet);
+              
               coins += win;
               updateCoins();
               board.removeChild(ball);
               ballsDone++;
+              
               if (ballsDone === plinkoBallCount) {
                 messageBox.innerHTML = `<span style="color:#0f0">🎉 Ai câștigat ${win * plinkoBallCount} monede în total!</span>`;
+                isDropping = false;
               }
             } else {
-              // Verificăm interacțiunea cu bolțurile din rândul curent
-              const pegsInCurrentRow = currentRow + 1;
-              const rowWidth = (pegsInCurrentRow - 1) * COL_SPACING;
-              const rowStartX = ((board.clientWidth || 300) - rowWidth) / 2;
-
-              // Determinăm bolțul "cel mai apropiat" de centrul bilei
-              let pegIndex = Math.round((ballX - rowStartX) / COL_SPACING);
-              pegIndex = Math.max(0, Math.min(pegIndex, pegsInCurrentRow - 1)); // Limităm
-
-              // Găsim poziția exactă a bolțului cu acest index în rândul curent
-              const targetPeg = pegPositions.find(p => p.row === currentRow && p.col === pegIndex);
-
-              if (targetPeg) {
-                // Simulăm o lovitură ușoară: bila se mișcă ușor spre stânga sau dreapta
-                const direction = Math.random() > 0.5 ? 1 : -1;
-                // Mutăm bila logic pe X
-                ballX += direction * (COL_SPACING / 2);
-                 // Actualizăm poziția vizuală a bilei
-                ball.style.left = `${ballX - BALL_RADIUS}px`;
-                // Poziția Y este deja actualizată mai sus
-                ball.style.top = `${ballY - BALL_RADIUS}px`;
-              } else {
-                  // În caz de eroare (nu ar trebui să apară), doar coborâm bila
-                   ball.style.top = `${ballY - BALL_RADIUS}px`;
-              }
+              ball.style.top = `${ballY - BALL_RADIUS}px`;
+              ball.style.left = `${ballX - BALL_RADIUS}px`;
+              
+              const pegs = document.querySelectorAll('.peg');
+              pegs.forEach(peg => {
+                const pegRect = peg.getBoundingClientRect();
+                const boardRect = board.getBoundingClientRect();
+                const pegX = pegRect.left - boardRect.left + PEG_RADIUS;
+                const pegY = pegRect.top - boardRect.top + PEG_RADIUS;
+                
+                const dx = ballX - pegX;
+                const dy = ballY - pegY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < BALL_RADIUS + PEG_RADIUS) {
+                  const angle = Math.atan2(dy, dx);
+                  velX = Math.cos(angle) * 3;
+                  velY = Math.sin(angle) * 3;
+                }
+              });
             }
-          }, 150); // Viteză de cădere
-        }, b * 800); // Întârziere între bile
+          }, 15);
+        }, b * 300);
       }
     });
-    // --- CRUSH - Ritm Modificat ---
+
+    window.addEventListener('load', createPegs);
+    window.addEventListener('resize', createPegs);
+
+    // - CRUSH - Ritm Modificat și Bug Reparat -
     const plane = document.getElementById('plane');
-    const multiplier = document.getElementById('multiplier');
+    const multiplierDisplay = document.getElementById('multiplier-display');
     const explosion = document.getElementById('explosion');
     const startCrush = document.getElementById('start-crush');
     const cashOut = document.getElementById('cash-out');
+    let isCrushing = false;
+    let crushStartTime;
+    let crushAnimationFrameId;
+    const MAX_MULTIPLIER = 1000000; // Limită maximă pentru multiplicator
+
     startCrush.addEventListener('click', () => {
       if (isCrushing || coins < currentBet) {
         messageBox.innerHTML = `<span style="color:#f55">Fonduri insuficiente!</span>`;
@@ -955,48 +1181,70 @@
       messageBox.textContent = "Zboară... dar explodează oricând!";
       explosion.style.display = 'none';
       plane.style.transform = 'rotate(0deg)';
-      multiplier.textContent = '1.00x';
+      multiplierDisplay.textContent = '1.000x';
       cashOut.disabled = false;
-      let factor = 1.00;
-      // Creștere de 1.00/sec + 0.01/sec suplimentar
-      crushInterval = setInterval(() => {
-        factor += 1.00; // +1/sec
-        factor += 0.01; // +0.01/sec suplimentar
-        multiplier.textContent = factor.toFixed(2) + 'x';
-        plane.style.transform = `rotate(${(factor - 1) * 50}deg)`; // Rotire mai lentă
-        // Șansă de explozie bazată pe multiplicator
-        if (Math.random() < 0.02 + (factor * 0.0005)) { // Ajustat pentru noua viteză
-          clearInterval(crushInterval);
+      crushStartTime = Date.now();
+
+      function updateCrush(timestamp) {
+        if (!isCrushing) return;
+
+        const elapsedTimeMs = timestamp - crushStartTime;
+        // Asigurăm că elapsedTimeMs nu este negativ și că multiplicatorul nu depășește limita
+        const elapsedTimePositive = Math.max(0, elapsedTimeMs);
+        let newMultiplierValue = 1.000 + (elapsedTimePositive * 0.001);
+        newMultiplierValue = Math.min(newMultiplierValue, MAX_MULTIPLIER); // Limitare
+
+        multiplierDisplay.textContent = newMultiplierValue.toFixed(3) + 'x';
+        plane.style.transform = `rotate(${(newMultiplierValue - 1) * 20}deg)`; // Rotație avion
+
+        // Șansă de explozie - ajustată pentru a fi mai realistă
+        if (Math.random() < 0.00002 + (newMultiplierValue * 0.0000005)) {
+          isCrushing = false;
+          cancelAnimationFrame(crushAnimationFrameId);
           explosion.style.display = 'block';
-          const xValue = parseFloat(multiplier.textContent);
+          const xValue = parseFloat(multiplierDisplay.textContent);
           historyCrush.push(xValue);
           if (historyCrush.length > 50) historyCrush.shift();
           localStorage.setItem('crushHistory', JSON.stringify(historyCrush));
           updateCrushHistory();
-          messageBox.innerHTML = `<span style="color:#f00">💥 Explode la ${xValue.toFixed(2)}x! Ai pierdut!</span>`;
+          messageBox.innerHTML = `<span style="color:#f00">💥 Explode la ${xValue.toFixed(3)}x! Ai pierdut!</span>`;
           cashOut.disabled = true;
-          isCrushing = false;
+          return;
         }
-      }, 1000); // Interval de 1 secundă pentru creștere constantă
+
+        crushAnimationFrameId = requestAnimationFrame(updateCrush);
+      }
+
+      crushAnimationFrameId = requestAnimationFrame(updateCrush);
     });
+
     cashOut.addEventListener('click', () => {
       if (!isCrushing) return;
-      clearInterval(crushInterval);
-      const win = Math.floor(currentBet * parseFloat(multiplier.textContent));
-      coins += win;
-      messageBox.innerHTML = `<span style="color:#0f0">✅ Cash Out la ${multiplier.textContent}! +${win} monede!</span>`;
-      cashOut.disabled = true;
       isCrushing = false;
+      cancelAnimationFrame(crushAnimationFrameId);
+      const elapsedTimeMs = Date.now() - crushStartTime;
+      const elapsedTimePositive = Math.max(0, elapsedTimeMs);
+      const winMultiplier = 1.000 + (elapsedTimePositive * 0.001);
+      const winMultiplierCapped = Math.min(winMultiplier, MAX_MULTIPLIER); // Limitare la cashout
+      const win = Math.floor(currentBet * winMultiplierCapped);
+      coins += win;
       updateCoins();
+      messageBox.innerHTML = `<span style="color:#0f0">✅ Cash Out la ${winMultiplierCapped.toFixed(3)}x! +${win} monede!</span>`;
+      cashOut.disabled = true;
     });
-    // --- TOWER - 8 Etaje și Dificultăți Revizuite ---
+
+    // - TOWER - Modificat pentru a fi mai compact și mișcare pas cu pas -
     let towerDifficulty = 'easy';
     const towerGrid = document.getElementById('tower-grid');
+    let towerCurrentStep = 0; // Pasul curent în Tower
+    let towerPath = []; // Stocăm pozițiile sigure pentru fiecare rând
+
     function setTowerDiff(diff) {
       towerDifficulty = diff;
       document.querySelectorAll('.difficulty button').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
     }
+
     document.getElementById('start-tower').addEventListener('click', () => {
       if (coins < currentBet) {
         messageBox.textContent = "Fonduri insuficiente!";
@@ -1005,116 +1253,107 @@
       coins -= currentBet;
       updateCoins();
       towerGrid.innerHTML = '';
+      towerCurrentStep = 0;
+      towerPath = [];
       
-      const rows = 8; // 8 etaje
+      const rows = 8;
       let cols, bombsPerRow, safePathsPerRow;
-
+      
       if (towerDifficulty === 'easy') {
         cols = 3;
         bombsPerRow = 1;
-        safePathsPerRow = 2; // 2 căi sigure pe fiecare etaj
+        safePathsPerRow = 1; // Redus de la 2 la 1
       } else if (towerDifficulty === 'medium') {
-        cols = 3;
+        cols = 4;
         bombsPerRow = 2;
-        safePathsPerRow = 1; // 1 cale sigură pe fiecare etaj
-      } else { // hard
-        cols = 3;
-        bombsPerRow = 2;
-        safePathsPerRow = 1; // 1 cale sigură pe fiecare etaj
+        safePathsPerRow = 1; // Redus de la 2 la 1
+      } else {
+        cols = 5;
+        bombsPerRow = 3;
+        safePathsPerRow = 1; // Redus de la 2 la 1
       }
-
-      // Setăm coloanele grilei
+      
       towerGrid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
-      // Generăm pentru fiecare rând
+      
+      // Generăm întregul traseu în avans
       for (let row = 0; row < rows; row++) {
-        // Alegem aleatoriu pozițiile sigure pentru acest rând
-        const safeCols = [];
-        while (safeCols.length < safePathsPerRow) {
-            const col = Math.floor(Math.random() * cols);
-            if (!safeCols.includes(col)) {
-                safeCols.push(col);
-            }
+        const safePositions = [];
+        while (safePositions.length < safePathsPerRow) {
+          const pos = Math.floor(Math.random() * cols);
+          if (!safePositions.includes(pos)) safePositions.push(pos);
         }
-
-        // Alegem aleatoriu pozițiile bombelor pentru acest rând
-        const bombCols = [];
-        while (bombCols.length < bombsPerRow) {
-            const col = Math.floor(Math.random() * cols);
-            // O poziție nu poate fi și sigură și bombă
-            if (!bombCols.includes(col) && !safeCols.includes(col)) {
-                bombCols.push(col);
-            }
-        }
-
-        // Cream celulele pentru acest rând
+        towerPath.push(safePositions[0]); // Alegem prima poziție sigură pentru acest rând
+      }
+      
+      // Cream grila cu toate celulele ascunse
+      for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const cell = document.createElement('div');
           cell.className = 'tower-cell';
-          cell.textContent = '🧱';
           cell.dataset.row = row;
           cell.dataset.col = col;
+          cell.dataset.revealed = 'false';
+          cell.dataset.type = 'unknown'; // Nu știm ce e
           
-          // Determinăm tipul celulei
-          if (bombCols.includes(col)) {
-              cell.dataset.type = 'bomb';
-          } else if (safeCols.includes(col)) {
-              cell.dataset.type = 'safe';
-              // Dacă este ultimul rând, este calea finală către câștig
-              if (row === rows - 1) {
-                  cell.dataset.final = 'true';
-              }
-          } else {
-              cell.dataset.type = 'empty'; // Celulă goală, dar nu periculoasă
-          }
-
-          cell.addEventListener('click', function () {
-            if (this.dataset.revealed === 'true') return; // Nu poți da click de 2 ori
+          cell.addEventListener('click', function() {
+            // Poți face doar un pas la rândul curent
+            const clickedRow = parseInt(this.dataset.row);
+            if (clickedRow !== towerCurrentStep) {
+                messageBox.textContent = "Poți merge doar pe rândul curent!";
+                return;
+            }
+            
+            if (this.dataset.revealed === 'true') return; // Nu poți face click de 2 ori pe aceeași celulă
+            
             this.dataset.revealed = 'true';
-
-            if (this.dataset.type === 'bomb') {
+            
+            const isSafe = (parseInt(this.dataset.col) === towerPath[clickedRow]);
+            
+            if (!isSafe) {
               this.classList.add('bomb');
               this.textContent = '💣';
               messageBox.innerHTML = `<span style="color:#f00">💥 Ai dat peste o bombă! Joc terminat.</span>`;
               // Deblocăm toate celulele pentru vizualizare
               document.querySelectorAll('.tower-cell').forEach(c => c.dataset.revealed = 'true');
               return;
-            } else if (this.dataset.type === 'safe') {
-              if (this.dataset.final === 'true') {
-                  this.classList.add('bonus');
-                  this.textContent = '💰';
-                  const win = Math.floor(currentBet * (2 + Math.random() * 3)); // Câștig mai mare la final
-                  coins += win;
-                  messageBox.innerHTML = `<span style="color:#0f0">🎉 Ai ajuns la final! +${win} monede!</span>`;
-                  updateCoins();
-                  // Deblocăm toate celulele pentru vizualizare
-                  document.querySelectorAll('.tower-cell').forEach(c => c.dataset.revealed = 'true');
-              } else {
-                  this.classList.add('safe');
-                  this.textContent = '✅';
-                  messageBox.textContent = "Ai ales calea corectă!";
-              }
-            } else { // empty
+            } else {
               this.classList.add('safe');
               this.textContent = '✅';
-              messageBox.textContent = "Cale sigură.";
+              towerCurrentStep++;
+              
+              if (towerCurrentStep >= rows) {
+                // Ai ajuns la final
+                this.classList.add('bonus');
+                this.textContent = '💰';
+                const win = Math.floor(currentBet * (2 + Math.random() * 3));
+                coins += win;
+                messageBox.innerHTML = `<span style="color:#0f0">🎉 Ai ajuns la final! +${win} monede!</span>`;
+                updateCoins();
+                // Deblocăm toate celulele pentru vizualizare
+                document.querySelectorAll('.tower-cell').forEach(c => c.dataset.revealed = 'true');
+              } else {
+                messageBox.textContent = "Ai ales calea corectă! Continuă la următorul rând.";
+              }
             }
           });
+          
           towerGrid.appendChild(cell);
         }
       }
     });
 
-    // --- MINER ---
+    // - MINER - Modificat pentru blocare după pierdere și recompense ajustate -
     let bombCount = 1;
     const minerGrid = document.getElementById('miner-grid');
     let safeFound = 0;
-    const xValues = { 1: 10, 3: 5, 5: 3.5, 10: 2, 15: 1.8, 20: 1.5, 24: 1.2 };
+    const xValues = { 1: 1.5, 3: 2, 5: 2.5, 10: 3, 15: 3.5, 20: 4, 24: 5 }; // Multiplicatori mai mici
+
     function setBombs(count) {
       bombCount = count;
       document.querySelectorAll('.bombs-select button').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
     }
+
     document.getElementById('start-miner').addEventListener('click', () => {
       if (coins < currentBet) {
         messageBox.textContent = "Fonduri insuficiente!";
@@ -1124,11 +1363,14 @@
       updateCoins();
       minerGrid.innerHTML = '';
       safeFound = 0;
+      document.getElementById('cash-out-miner').disabled = true;
+      
       const totalCells = 36;
       const bombs = new Set();
       while (bombs.size < bombCount) {
         bombs.add(Math.floor(Math.random() * totalCells));
       }
+      
       for (let i = 0; i < totalCells; i++) {
         const cell = document.createElement('div');
         cell.className = 'miner-cell';
@@ -1136,189 +1378,528 @@
         cell.dataset.index = i;
         cell.dataset.bomb = bombs.has(i) ? 'true' : 'false';
         cell.dataset.shown = 'false';
-        cell.addEventListener('click', function () {
+        
+        cell.addEventListener('click', function() {
           if (this.dataset.shown === 'true') return;
+          this.dataset.shown = 'true';
+          
           if (this.dataset.bomb === 'true') {
             this.classList.add('bomb');
             this.textContent = '💣';
-            this.dataset.shown = 'true';
             messageBox.innerHTML = `<span style="color:#f00">💥 Ai dat peste o bombă!</span>`;
             document.getElementById('cash-out-miner').disabled = true;
+            // Blochează toate celulele după pierdere
+            document.querySelectorAll('.miner-cell').forEach(c => {
+                c.classList.add('disabled');
+                if (c.dataset.bomb === 'true' && c.dataset.shown !== 'true') {
+                    c.classList.add('bomb');
+                    c.textContent = '💣';
+                } else if (c.dataset.shown !== 'true') {
+                    c.classList.add('safe');
+                    c.textContent = '💎';
+                }
+            });
           } else {
             this.classList.add('safe');
             this.textContent = '✅';
-            this.dataset.shown = 'true';
             safeFound++;
             document.getElementById('cash-out-miner').disabled = false;
           }
         });
+        
         minerGrid.appendChild(cell);
       }
-      document.getElementById('cash-out-miner').disabled = true;
-      document.getElementById('cash-out-miner').onclick = () => {
-        const multiplier = xValues[bombCount];
-        const win = Math.floor(currentBet * multiplier * (safeFound / (totalCells - bombCount)));
-        coins += win;
-        messageBox.innerHTML = `<span style="color:#0f0">💰 Ai extras ${win} monede!</span>`;
-        // Arată toate
-        document.querySelectorAll('.miner-cell').forEach(c => {
-          if (c.dataset.bomb === 'true' && c.dataset.shown !== 'true') {
-            c.classList.add('bomb');
-            c.textContent = '💣';
-          } else if (c.dataset.shown !== 'true') {
-            c.classList.add('safe');
-            c.textContent = '💎';
-          }
-        });
-        document.getElementById('cash-out-miner').disabled = true;
-        updateCoins();
-      };
     });
 
-    // --- CROSSY ROAD (Nou) ---
+    document.getElementById('cash-out-miner').onclick = () => {
+      const multiplier = xValues[bombCount] || 1;
+      // Recompensa este bazată pe numărul de celule sigure găsite și dificultate
+      const win = Math.floor(currentBet * multiplier * (safeFound / 10)); // Scalat de la 10 celule sigure
+      coins += win;
+      updateCoins();
+      messageBox.innerHTML = `<span style="color:#0f0">✅ Ai salvat comoara! +${win} monede!</span>`;
+      document.getElementById('cash-out-miner').disabled = true;
+      // Blochează toate celulele după cashout
+      document.querySelectorAll('.miner-cell').forEach(c => {
+          c.classList.add('disabled');
+          if (c.dataset.bomb === 'true' && c.dataset.shown !== 'true') {
+              c.classList.add('bomb');
+              c.textContent = '💣';
+          } else if (c.dataset.shown !== 'true') {
+              c.classList.add('safe');
+              c.textContent = '💎';
+          }
+      });
+    };
+
+    // - CROSSY -
     let crossyGameActive = false;
     let crossyCurrentStep = 0;
-    let crossyTotalSteps = 5; // Numărul de pași/linii
-    let crossySafeChoices = []; // Stocăm alegerile sigure pentru fiecare pas
-    let crossyPotentialWin = 0;
-    const crossyGameArea = document.getElementById('crossy-game-area');
+    let crossyPath = [];
     const crossyMessage = document.getElementById('crossy-message');
-    const crossyWinDisplay = document.getElementById('crossy-win-display');
-    const crossyLeftBtn = document.getElementById('crossy-left-btn');
-    const crossyCenterBtn = document.getElementById('crossy-center-btn');
-    const crossyRightBtn = document.getElementById('crossy-right-btn');
+    const crossyPathDisplay = document.getElementById('crossy-path');
+    const leftBtn = document.getElementById('left-btn');
+    const rightBtn = document.getElementById('right-btn');
     const startCrossyBtn = document.getElementById('start-crossy');
     const cashOutCrossyBtn = document.getElementById('cash-out-crossy');
-
-    function startCrossyGame() {
-        if (coins < currentBet) {
-            crossyMessage.textContent = "Fonduri insuficiente!";
-            return;
-        }
-        coins -= currentBet;
-        updateCoins();
-
-        crossyGameActive = true;
-        crossyCurrentStep = 0;
-        crossyPotentialWin = currentBet;
-        crossySafeChoices = [];
-        crossyGameArea.innerHTML = '';
-        crossyMessage.textContent = "Alege direcția pentru primul pas!";
-        crossyWinDisplay.textContent = `Câștig potențial: ${crossyPotentialWin} monede`;
-        startCrossyBtn.disabled = true;
-        enableCrossyButtons();
-
-        // Generăm alegerile sigure pentru fiecare pas
-        for (let i = 0; i < crossyTotalSteps; i++) {
-            const safeChoice = ['left', 'center', 'right'][Math.floor(Math.random() * 3)];
-            crossySafeChoices.push(safeChoice);
-        }
-
-        createCrossyPath(crossyCurrentStep);
-    }
+    const crossyWinDisplay = document.getElementById('crossy-win');
 
     function createCrossyPath(step) {
-        crossyGameArea.innerHTML = ''; // Curățăm zona de joc
-
-        // Creează linia curentă unde se află jucătorul
-        const playerPath = document.createElement('div');
-        playerPath.className = 'crossy-path';
-        playerPath.style.background = '#555'; // Fundal diferit pentru linia jucătorului
-        const player = document.createElement('div');
-        player.className = 'crossy-player';
-        player.id = 'crossy-player';
-        player.textContent = '🚶';
-        player.style.left = '50%'; // Începe în mijloc
-        playerPath.appendChild(player);
-        crossyGameArea.appendChild(playerPath);
-
-        // Creează următoarea linie cu mașini
-        const nextPath = document.createElement('div');
-        nextPath.className = 'crossy-path';
-        nextPath.id = 'crossy-next-path';
-
-        // Adaugă mașini în mișcare
-        for (let i = 0; i < 3; i++) { // 3 mașini
-            const car = document.createElement('div');
-            car.className = 'crossy-car';
-            car.textContent = '🚗';
-            car.style.animationDelay = `${i * 1}s`; // Decalaj pentru mașini
-            car.style.top = `${5 + i * 10}px`; // Poziție verticală diferită pentru fiecare
-            nextPath.appendChild(car);
+      crossyPathDisplay.innerHTML = '';
+      crossyPath = [];
+      const pathLength = 5;
+      const correctPosition = Math.floor(Math.random() * 3); // 0, 1, sau 2
+      
+      for (let i = 0; i < pathLength; i++) {
+        const segment = document.createElement('div');
+        if (i < step) {
+          segment.textContent = '🐸'; // Sau imaginea găinii, dacă o ai
+        } else if (i === step) {
+          segment.textContent = ['⬅️', '⏺️', '➡️'][correctPosition];
+          crossyPath.push(correctPosition);
+        } else {
+          const randPos = Math.floor(Math.random() * 3);
+          segment.textContent = ['⬅️', '⏺️', '➡️'][randPos];
+          crossyPath.push(randPos);
         }
-
-        crossyGameArea.appendChild(nextPath);
+        crossyPathDisplay.appendChild(segment);
+      }
     }
 
     function enableCrossyButtons() {
-        crossyLeftBtn.disabled = false;
-        crossyCenterBtn.disabled = false;
-        crossyRightBtn.disabled = false;
+      leftBtn.disabled = false;
+      rightBtn.disabled = false;
     }
+
     function disableCrossyButtons() {
-        crossyLeftBtn.disabled = true;
-        crossyCenterBtn.disabled = true;
-        crossyRightBtn.disabled = true;
+      leftBtn.disabled = true;
+      rightBtn.disabled = true;
     }
 
-    function crossyChoose(choice) {
-        if (!crossyGameActive) return;
+    function startCrossyGame() {
+      if (crossyGameActive || coins < currentBet) {
+        crossyMessage.innerHTML = `<span style="color:#f55">Fonduri insuficiente!</span>`;
+        return;
+      }
+      crossyGameActive = true;
+      coins -= currentBet;
+      updateCoins();
+      crossyCurrentStep = 0;
+      crossyMessage.innerHTML = `Alege direcția! Alege pentru pasul ${crossyCurrentStep + 1}.`;
+      createCrossyPath(crossyCurrentStep);
+      crossyWinDisplay.textContent = Math.floor(currentBet * Math.pow(1.5, crossyCurrentStep + 1));
+      setTimeout(enableCrossyButtons, 500);
+      startCrossyBtn.disabled = true;
+      cashOutCrossyBtn.disabled = false;
+    }
 
-        const player = document.getElementById('crossy-player');
-        if (!player) return;
+    leftBtn.addEventListener('click', () => makeCrossyChoice(0));
+    rightBtn.addEventListener('click', () => makeCrossyChoice(2));
 
-        disableCrossyButtons(); // Dezactivăm butoanele temporar
-
-        // Determinăm poziția țintă în funcție de alegere
-        let targetPosition;
-        if (choice === 'left') targetPosition = '10%';
-        else if (choice === 'center') targetPosition = '50%';
-        else if (choice === 'right') targetPosition = '90%';
-
-        // Animație de mișcare a jucătorului
-        player.style.left = targetPosition;
-
-        // Verificăm dacă alegerea este corectă
+    function makeCrossyChoice(choice) {
+      disableCrossyButtons();
+      const correctChoice = crossyPath[crossyCurrentStep];
+      
+      if (choice === correctChoice) {
+        crossyMessage.innerHTML = `<span style="color:#0f0">✅ Corect! Continuă...</span>`;
+        crossyCurrentStep++;
+        crossyWinDisplay.textContent = Math.floor(currentBet * Math.pow(1.5, crossyCurrentStep + 1));
+        
         setTimeout(() => {
-            const isSafe = (choice === crossySafeChoices[crossyCurrentStep]);
-
-            if (isSafe) {
-                crossyCurrentStep++;
-                crossyPotentialWin = Math.floor(crossyPotentialWin * (1.5 + Math.random() * 0.5)); // Creștere câștig
-                crossyWinDisplay.textContent = `Câștig potențial: ${crossyPotentialWin} monede`;
-
-                if (crossyCurrentStep >= crossyTotalSteps) {
-                    // Jucătorul a trecut toate liniile
-                    crossyMessage.innerHTML = `<span style="color:#0f0">🎉 Ai trecut toate liniile! Ai câștigat ${crossyPotentialWin} monede!</span>`;
-                    coins += crossyPotentialWin;
-                    updateCoins();
-                    endCrossyGame();
-                } else {
-                    // Trecem la următorul pas
-                    crossyMessage.textContent = `Bun! Alege pentru pasul ${crossyCurrentStep + 1}.`;
-                    createCrossyPath(crossyCurrentStep);
-                    setTimeout(enableCrossyButtons, 500); // Activăm butoanele după o scurtă întârziere
-                }
-            } else {
-                // Alegere greșită - jucătorul este lovit
-                crossyMessage.innerHTML = `<span style="color:#f00">💥 Ai fost lovit! Ai pierdut pariul.</span>`;
-                endCrossyGame();
-            }
-        }, 600); // Durata animației (600ms)
+          if (crossyCurrentStep >= 5) {
+            const win = Math.floor(currentBet * Math.pow(1.5, crossyCurrentStep));
+            coins += win;
+            updateCoins();
+            crossyMessage.innerHTML = `<span style="color:#0f0">🎉 Ai terminat nivelul! +${win} monede!</span>`;
+            endCrossyGame();
+          } else {
+            crossyMessage.innerHTML = `Alege direcția! Alege pentru pasul ${crossyCurrentStep + 1}.`;
+            createCrossyPath(crossyCurrentStep);
+            setTimeout(enableCrossyButtons, 500);
+          }
+        }, 600);
+      } else {
+        crossyMessage.innerHTML = `<span style="color:#f00">💥 Ai fost lovit! Ai pierdut pariul.</span>`;
+        endCrossyGame();
+      }
     }
 
     function endCrossyGame() {
-        crossyGameActive = false;
-        crossyWinDisplay.textContent = '';
-        startCrossyBtn.disabled = false;
-        disableCrossyButtons();
-        cashOutCrossyBtn.disabled = true;
+      crossyGameActive = false;
+      crossyWinDisplay.textContent = '';
+      startCrossyBtn.disabled = false;
+      disableCrossyButtons();
+      cashOutCrossyBtn.disabled = true;
     }
 
     startCrossyBtn.addEventListener('click', startCrossyGame);
-    // --- Sfârșit Crossy ---
+    cashOutCrossyBtn.addEventListener('click', () => {
+      if (!crossyGameActive) return;
+      const win = Math.floor(currentBet * Math.pow(1.5, crossyCurrentStep));
+      coins += win;
+      updateCoins();
+      crossyMessage.innerHTML = `<span style="color:#0f0">✅ Ai ieșit! +${win} monede!</span>`;
+      endCrossyGame();
+    });
 
-    // --- RESETARE ---
+    // - BLACKJACK - Reducerea Egalităților -
+    let bjDeck = [];
+    let bjPlayerHand = [];
+    let bjDealerHand = [];
+    let bjGameActive = false;
+
+    const bjMessage = document.getElementById('bj-message');
+    const dealerCardsEl = document.getElementById('dealer-cards');
+    const playerCardsEl = document.getElementById('player-cards');
+    const dealerTotalEl = document.getElementById('dealer-total');
+    const playerTotalEl = document.getElementById('player-total');
+    const hitButton = document.getElementById('bj-hit');
+    const standButton = document.getElementById('bj-stand');
+    const dealButton = document.getElementById('bj-deal');
+
+    function createDeck() {
+        const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        const deck = [];
+        for (let suit of suits) {
+            for (let value of values) {
+                deck.push({ suit, value });
+            }
+        }
+        return deck;
+    }
+
+    function shuffleDeck(deck) {
+        for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+    }
+
+    function getCardValue(card) {
+        if (['J', 'Q', 'K'].includes(card.value)) return 10;
+        if (card.value === 'A') return 11;
+        return parseInt(card.value);
+    }
+
+    function calculateHandValue(hand) {
+        let value = 0;
+        let aces = 0;
+        for (let card of hand) {
+            value += getCardValue(card);
+            if (card.value === 'A') aces++;
+        }
+        while (value > 21 && aces > 0) {
+            value -= 10;
+            aces--;
+        }
+        return value;
+    }
+
+    function displayCard(card, container, hidden = false) {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
+        if (hidden) {
+            cardEl.classList.add('hidden-card');
+            cardEl.textContent = '?';
+        } else {
+            cardEl.textContent = `${card.value}${card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}`;
+            if (card.suit === 'hearts' || card.suit === 'diamonds') {
+                cardEl.style.color = 'red';
+            }
+        }
+        container.appendChild(cardEl);
+    }
+
+    function startBJGame() {
+        if (bjGameActive || coins < currentBet) {
+            bjMessage.textContent = "Fonduri insuficiente!";
+            return;
+        }
+        bjGameActive = true;
+        coins -= currentBet;
+        updateCoins();
+        bjMessage.textContent = "Joc nou început!";
+        bjDeck = createDeck();
+        shuffleDeck(bjDeck);
+        bjPlayerHand = [];
+        bjDealerHand = [];
+        dealerCardsEl.innerHTML = '';
+        playerCardsEl.innerHTML = '';
+        playerTotalEl.textContent = '0';
+        dealerTotalEl.textContent = '?';
+
+        bjPlayerHand.push(bjDeck.pop());
+        bjDealerHand.push(bjDeck.pop());
+        bjPlayerHand.push(bjDeck.pop());
+        bjDealerHand.push(bjDeck.pop());
+
+        displayCard(bjPlayerHand[0], playerCardsEl);
+        displayCard(bjPlayerHand[1], playerCardsEl);
+        displayCard(bjDealerHand[0], dealerCardsEl);
+        displayCard(bjDealerHand[1], dealerCardsEl, true);
+
+        playerTotalEl.textContent = calculateHandValue(bjPlayerHand);
+
+        if (calculateHandValue(bjPlayerHand) === 21) {
+             bjMessage.textContent = "Blackjack! Așteaptă dealerul...";
+             setTimeout(dealerPlay, 1000);
+        } else {
+            hitButton.disabled = false;
+            standButton.disabled = false;
+        }
+        dealButton.disabled = true;
+    }
+
+    function playerHit() {
+        if (!bjGameActive) return;
+        const newCard = bjDeck.pop();
+        bjPlayerHand.push(newCard);
+        displayCard(newCard, playerCardsEl);
+        const playerValue = calculateHandValue(bjPlayerHand);
+        playerTotalEl.textContent = playerValue;
+
+        if (playerValue > 21) {
+            bjMessage.textContent = "Ai depășit 21! Ai pierdut.";
+            endBJGame();
+        } else if (playerValue === 21) {
+            bjMessage.textContent = "Ai 21! Așteaptă dealerul...";
+            playerStand();
+        }
+    }
+
+    function playerStand() {
+        if (!bjGameActive) return;
+        hitButton.disabled = true;
+        standButton.disabled = true;
+        bjMessage.textContent = "Dealerul joacă...";
+        setTimeout(dealerPlay, 1000);
+    }
+
+    function dealerPlay() {
+        dealerCardsEl.innerHTML = '';
+        displayCard(bjDealerHand[0], dealerCardsEl);
+        displayCard(bjDealerHand[1], dealerCardsEl);
+        let dealerValue = calculateHandValue(bjDealerHand);
+        dealerTotalEl.textContent = dealerValue;
+
+        const dealerInterval = setInterval(() => {
+            if (dealerValue < 17) {
+                const newCard = bjDeck.pop();
+                bjDealerHand.push(newCard);
+                displayCard(newCard, dealerCardsEl);
+                dealerValue = calculateHandValue(bjDealerHand);
+                dealerTotalEl.textContent = dealerValue;
+                
+                if (dealerValue > 21) {
+                    clearInterval(dealerInterval);
+                    bjMessage.textContent = "Dealerul a depășit 21! Ai câștigat!";
+                    coins += currentBet * 2;
+                    updateCoins();
+                    endBJGame();
+                }
+            } else {
+                clearInterval(dealerInterval);
+                setTimeout(determineBJWinner, 500);
+            }
+        }, 1000);
+    }
+
+    // Funcție modificată pentru a reduce egalitățile
+    function determineBJWinner() {
+        const playerValue = calculateHandValue(bjPlayerHand);
+        const dealerValue = calculateHandValue(bjDealerHand);
+
+        if (playerValue > 21) {
+            bjMessage.textContent = "Ai depășit 21! Ai pierdut.";
+        } else if (dealerValue > 21) {
+            bjMessage.textContent = "Dealerul a depășit 21! Ai câștigat!";
+        } else if (playerValue > dealerValue) {
+            bjMessage.textContent = "Ai câștigat!";
+            coins += currentBet * 2;
+            updateCoins();
+        } else if (playerValue < dealerValue) {
+            bjMessage.textContent = "Dealerul câștigă.";
+        } else {
+            // Reducem șansele de egalitate prin introducerea unui "tie-breaker"
+            // De exemplu, dacă amândoi au aceeași valoare, dealerul câștigă în 60% din cazuri
+            if (Math.random() < 0.6) { // 60% șanse dealer, 40% push
+                 bjMessage.textContent = "Dealerul câștigă (Tie-breaker).";
+            } else {
+                 bjMessage.textContent = "Egalitate (Push). Pariul este returnat.";
+                 coins += currentBet;
+                 updateCoins();
+            }
+        }
+        endBJGame();
+    }
+
+    function endBJGame() {
+        bjGameActive = false;
+        hitButton.disabled = true;
+        standButton.disabled = true;
+        dealButton.disabled = false;
+    }
+
+    dealButton.addEventListener('click', startBJGame);
+    hitButton.addEventListener('click', playerHit);
+    standButton.addEventListener('click', playerStand);
+
+    // - POKER - Joc Simplu de Video Poker -
+    let pokerDeck = [];
+    let pokerHand = [];
+    let pokerGameActive = false;
+    let heldCards = [false, false, false, false, false]; // Pentru a ține evidența cărților păstrate
+
+    const pokerMessage = document.getElementById('poker-message');
+    const pokerCardsEl = document.getElementById('poker-cards');
+    const dealPokerButton = document.getElementById('deal-poker');
+    const drawPokerButton = document.getElementById('draw-poker');
+
+    function createPokerDeck() {
+        const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        const deck = [];
+        for (let suit of suits) {
+            for (let value of values) {
+                deck.push({ suit, value });
+            }
+        }
+        return deck;
+    }
+
+    function shufflePokerDeck(deck) {
+        for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+    }
+
+    function displayPokerCard(card, index, container) {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
+        cardEl.dataset.index = index; // Adăugăm indexul pentru a identifica cardul
+        cardEl.textContent = `${card.value}${card.suit === 'hearts' ? '♥' : card.suit === 'diamonds' ? '♦' : card.suit === 'clubs' ? '♣' : '♠'}`;
+        if (card.suit === 'hearts' || card.suit === 'diamonds') {
+            cardEl.style.color = 'red';
+        }
+        
+        // Adăugăm eveniment de click pentru a păstra cardul
+        cardEl.addEventListener('click', () => {
+            if (pokerGameActive && !heldCards[index]) {
+                heldCards[index] = true;
+                cardEl.style.borderColor = '#ffcc00'; // Bordură galbenă pentru card păstrat
+                cardEl.style.boxShadow = '0 0 10px #ffcc00';
+            } else if (pokerGameActive && heldCards[index]) {
+                // Dacă deja e păstrat, îl eliberăm
+                heldCards[index] = false;
+                cardEl.style.borderColor = '#333';
+                cardEl.style.boxShadow = 'none';
+            }
+        });
+        
+        container.appendChild(cardEl);
+    }
+
+    function getPokerHandName(hand) {
+        // Simplificăm logica pentru un exemplu de bază
+        const values = hand.map(card => card.value);
+        const suits = hand.map(card => card.suit);
+        const valueCounts = {};
+        values.forEach(v => valueCounts[v] = (valueCounts[v] || 0) + 1);
+        const counts = Object.values(valueCounts).sort((a, b) => b - a);
+        const isFlush = new Set(suits).size === 1;
+        const sortedValues = values.map(v => isNaN(v) ? ({'J': 11, 'Q': 12, 'K': 13, 'A': 14}[v]) : parseInt(v)).sort((a, b) => a - b);
+        const isStraight = sortedValues.every((v, i) => i === 0 || v === sortedValues[i - 1] + 1) || 
+                           (sortedValues.join(',') === '2,3,4,5,14'); // Straight cu Ass
+
+        if (isStraight && isFlush && sortedValues[0] === 10) return { name: "Royal Flush", payout: 250 };
+        if (isStraight && isFlush) return { name: "Straight Flush", payout: 50 };
+        if (counts[0] === 4) return { name: "Four of a Kind", payout: 25 };
+        if (counts[0] === 3 && counts[1] === 2) return { name: "Full House", payout: 9 };
+        if (isFlush) return { name: "Flush", payout: 6 };
+        if (isStraight) return { name: "Straight", payout: 4 };
+        if (counts[0] === 3) return { name: "Three of a Kind", payout: 3 };
+        if (counts[0] === 2 && counts[1] === 2) return { name: "Two Pair", payout: 2 };
+        if (counts[0] === 2 && ['J', 'Q', 'K', 'A'].includes(values.find(v => valueCounts[v] === 2))) return { name: "Jacks or Better", payout: 1 };
+        return { name: "Nimic", payout: 0 };
+    }
+
+    function startPokerGame() {
+        if (pokerGameActive || coins < currentBet) {
+            pokerMessage.textContent = "Fonduri insuficiente!";
+            return;
+        }
+        pokerGameActive = true;
+        coins -= currentBet;
+        updateCoins();
+        pokerMessage.textContent = "Alege cărțile de păstrat și apoi Draw!";
+        pokerDeck = createPokerDeck();
+        shufflePokerDeck(pokerDeck);
+        pokerHand = [];
+        heldCards = [false, false, false, false, false];
+        pokerCardsEl.innerHTML = '';
+
+        // Împarte primele 5 cărți
+        for (let i = 0; i < 5; i++) {
+            pokerHand.push(pokerDeck.pop());
+        }
+
+        pokerHand.forEach((card, index) => {
+            displayPokerCard(card, index, pokerCardsEl);
+        });
+
+        dealPokerButton.disabled = true;
+        drawPokerButton.disabled = false;
+    }
+
+    function drawPokerCards() {
+        if (!pokerGameActive) return;
+
+        // Înlocuiește cărțile ne-păstrate
+        for (let i = 0; i < 5; i++) {
+            if (!heldCards[i]) {
+                pokerHand[i] = pokerDeck.pop();
+            }
+        }
+
+        // Re-afișează toate cărțile
+        pokerCardsEl.innerHTML = '';
+        pokerHand.forEach((card, index) => {
+            displayPokerCard(card, index, pokerCardsEl);
+            // Resetăm stilul pentru cărțile păstrate
+            if (heldCards[index]) {
+                const cardEl = pokerCardsEl.children[index];
+                cardEl.style.borderColor = '#ffcc00';
+                cardEl.style.boxShadow = '0 0 10px #ffcc00';
+            }
+        });
+
+        // Determină câștigul
+        const handResult = getPokerHandName(pokerHand);
+        const win = Math.floor(currentBet * handResult.payout);
+        
+        if (win > 0) {
+            coins += win;
+            pokerMessage.innerHTML = `<span style="color:#0f0">🎉 ${handResult.name}! +${win} monede!</span>`;
+        } else {
+            pokerMessage.innerHTML = `<span style="color:#f55">Nimic. Ai pierdut pariul.</span>`;
+        }
+        
+        updateCoins();
+        endPokerGame();
+    }
+
+    function endPokerGame() {
+        pokerGameActive = false;
+        dealPokerButton.disabled = false;
+        drawPokerButton.disabled = true;
+    }
+
+    dealPokerButton.addEventListener('click', startPokerGame);
+    drawPokerButton.addEventListener('click', drawPokerCards);
+
+    // - RESETARE -
     document.getElementById('reset').addEventListener('click', () => {
       if (confirm("Resetare totală a progresului?")) {
         coins = 1000;
@@ -1328,19 +1909,51 @@
         updateCoins();
         updateCrushHistory();
         messageBox.textContent = "✅ Joc resetat!";
-        // Resetăm și dificultatea Tower la easy
         towerDifficulty = 'easy';
         document.querySelectorAll('.difficulty button').forEach(b => b.classList.remove('active'));
         document.querySelector('.difficulty button').classList.add('active');
       }
     });
-    // --- SUSȚINERE AUTOR ---
+
+    // - SUSȚINERE AUTOR -
     document.getElementById('support').addEventListener('click', () => {
       window.open(instagramLink, '_blank');
     });
+    
+    document.getElementById('support2').addEventListener('click', () => {
+      window.open(instagramLink2, '_blank');
+    });
+    
+    // - BUTON HOME -
+    document.getElementById('home-btn').addEventListener('click', () => {
+      switchGame('slots');
+      messageBox.textContent = "Bun venit înapoi la pagina principală!";
+    });
+
     // Inițializare
     updateCoins();
-    updateCrushHistory();
+    updateBetDisplay();
+    createPegs();
+    
+    // Actualizăm afișajul pariului pentru BJ și Poker
+    function updateBJBetDisplay() {
+         document.getElementById('bj-bet-display').textContent = currentBet;
+    }
+    function updatePokerBetDisplay() {
+         document.getElementById('poker-bet-display').textContent = currentBet;
+    }
+    const originalSetBet = setBet;
+    setBet = function(amount) {
+        originalSetBet(amount);
+        updateBJBetDisplay();
+        updatePokerBetDisplay();
+    };
+    const originalApplyCustomBet = applyCustomBet;
+    applyCustomBet = function() {
+        originalApplyCustomBet();
+        updateBJBetDisplay();
+        updatePokerBetDisplay();
+    };
   </script>
 </body>
 </html>
